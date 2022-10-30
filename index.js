@@ -190,7 +190,7 @@ const getContact = async (accessToken) => {
 
 const displayContactName = (res, contact) => {
   if (contact.status === 'error') {
-    res.write(`<p>Unable to retrieve contact! Error Message: ${contact.message}</p>`);
+    res.write(`<p>¡No se puede recuperar el contacto!Mensaje de error: ${contact.message}</p>`);
     return;
   }
   const { firstname, lastname } = contact.properties;
