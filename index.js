@@ -203,7 +203,7 @@ app.get('/', async (req, res) => {
   if (isAuthorized(req.sessionID)) {
     const accessToken = await getAccessToken(req.sessionID);
     const contact = await getContact(accessToken);
-    res.write(`<h4>Access token: ${accessToken}</h4>`);
+    res.write(`<h4>Token de acceso: ${accessToken}</h4>`);
     displayContactName(res, contact);
   } else {
     res.write(`<a href="/install"><h3>Instala la aplicación</h3></a>`);
