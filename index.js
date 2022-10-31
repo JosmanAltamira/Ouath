@@ -6,6 +6,7 @@ const session = require('express-session');
 const opn = require('open');
 const app = express();
 
+
 const PORT = 3000;
 
 const refreshTokenStore = {};
@@ -194,19 +195,20 @@ const displayContactName = (res, contact) => {
     return;
   }
   const { firstname, lastname } = contact.properties;
-  res.write(`<p>Nombre de contacto: ${firstname.value} ${lastname.value}</p>`);
+  res.write(`<p><center>Nombre de contacto: ${firstname.value} ${lastname.value}</center></p>`);
 };
 
 app.get('/', async (req, res) => {
   res.setHeader('Content-Type', 'text/html');
-  res.write(`<h2>Guarneros God</h2>`);
+  res.write(`<h1 style="color:blue;"><center>Neu-traz</center></h1>`);
   if (isAuthorized(req.sessionID)) {
     const accessToken = await getAccessToken(req.sessionID);
     const contact = await getContact(accessToken);
-    res.write(`<h4>Token de acceso: ${accessToken}</h4>`);
+    res.write(`<p><h4><center>Token de acceso:</center><h4><p>
+               <p><h4><center>${accessToken}</center> </h4><p>`);
     displayContactName(res, contact);
   } else {
-    res.write(`<a href="/install"><h3>Instala la aplicación</h3></a>`);
+    res.write(`<a href="/install"><h3><center>Acceso al sistema</center></h3></a>`);
   }
   res.end();
 });
