@@ -9,6 +9,7 @@ const app = express();
 
 const PORT = 3000;
 
+
 const refreshTokenStore = {};
 const accessTokenCache = new NodeCache({ deleteOnExpire: true });
 
@@ -67,11 +68,11 @@ const authUrl =
 // La URL de autorización
 app.get('/install', (req, res) => {
   console.log('');
-  console.log('=== Initiating OAuth 2.0 flow with HubSpot ===');
+  console.log('=== Iniciando el flujo OAuth 2.0 con Hubspot ===');
   console.log('');
-  console.log("===> Step 1: Redirecting user to your app's OAuth URL");
+  console.log("===> Paso 1: redirigir al usuario a la URL OAuth de su aplicación");
   res.redirect(authUrl);
-  console.log('===> Step 2: User is being prompted for consent by HubSpot');
+  console.log('===> Paso 2: HubSpot le solicita el usuario.');
 });
 
 // Paso 2
@@ -83,7 +84,7 @@ app.get('/install', (req, res) => {
 // recibir el código de autorización del servidor OAuth 2.0,
 // y procesarlo en función de los parámetros de consulta que se pasan
 app.get('/oauth-callback', async (req, res) => {
-  console.log('===> Step 3: Handling the request sent by the server');
+  console.log('===> Paso 3: Manejo de la solicitud enviada por el servidor');
 
 // recibió un código de autorización de usuario, así que ahora combina eso con el otro
   // Los valores requeridos e intercambiar tanto por un token de acceso como para un token de actualización
@@ -100,7 +101,7 @@ app.get('/oauth-callback', async (req, res) => {
 
   // Paso 4
     // intercambia el código de autorización por un token de acceso y actualización del token
-    console.log('===> Step 4: Exchanging authorization code for an access token and refresh token');
+    console.log('===> Paso 4: intercambiar código de autorización para un token de acceso y actualizar token');
     const token = await exchangeForTokens(req.sessionID, authCodeProof);
     if (token.message) {
       return res.redirect(`/error?msg=${token.message}`);
@@ -127,10 +128,10 @@ const exchangeForTokens = async (userId, exchangeProof) => {
     refreshTokenStore[userId] = tokens.refresh_token;
     accessTokenCache.set(userId, tokens.access_token, Math.round(tokens.expires_in * 0.75));
 
-    console.log('       > Received an access token and refresh token');
+    console.log('       > Recibí un token de acceso y actualización de token');
     return tokens.access_token;
   } catch (e) {
-    console.error(`       > Error exchanging ${exchangeProof.grant_type} for access token`);
+    console.error(`       > Intercambio de errores${exchangeProof.grant_type} Para el token de acceso`);
     return JSON.parse(e.response.body);
   }
 };
@@ -150,7 +151,7 @@ const getAccessToken = async (userId) => {
 // Si el token de acceso ha expirado, recupere
   // uno nuevo con el token de actualización
   if (!accessTokenCache.get(userId)) {
-    console.log('Refreshing expired access token');
+    console.log('Refrescante token de acceso vencido');
     await refreshAccessToken(userId);
   }
   return accessTokenCache.get(userId);
@@ -166,13 +167,13 @@ const isAuthorized = (userId) => {
 
 const getContact = async (accessToken) => {
   console.log('');
-  console.log('=== Retrieving a contact from HubSpot using the access token ===');
+  console.log('=== Recuperar un contacto de Hubspot utilizando el token de acceso ===');
   try {
     const headers = {
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     };
-    console.log('===> Replace the following request.get() to test other API calls');
+    console.log('===> Reemplace la siguiente solicitud.get () para probar otras llamadas de API');
     console.log('===> request.get(\'https://api.hubapi.com/contacts/v1/lists/all/contacts/all?count=1\')');
     const result = await request.get('https://api.hubapi.com/contacts/v1/lists/all/contacts/all?count=1', {
       headers: headers
@@ -180,7 +181,7 @@ const getContact = async (accessToken) => {
 
     return JSON.parse(result).contacts[0];
   } catch (e) {
-    console.error('  > Unable to retrieve contact');
+    console.error('  > Incapaz de recuperar el contacto');
     return JSON.parse(e.response.body);
   }
 };
